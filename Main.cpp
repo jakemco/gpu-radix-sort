@@ -10,8 +10,10 @@
 #include <Windows.h>
 
 #include "DXWrapper.h"
+#include "Fractal.h"
 
 #include "RadixSort.sh"
+#include "qjulia4D.sh"
 
 // define the size of the window
 #define THREADSX 16			// number of threads in the thread group used in the compute shader
@@ -38,18 +40,43 @@ int WINAPI WinMain(
 	DXWrapper dx(windowHandle, WINWIDTH, WINHEIGHT);
 
 	DXTexture& backBuffer = dx.getTexture(0);
-	DXStructuredBuffer& sortBuffer = dx.getStructuredBuffer(sizeof(float), WINWIDTH * WINHEIGHT);
+	DXConstantBuffer& constantBuffer = dx.getConstantBuffer(sizeof(Fractal::MainConstantBuffer));
+	DXStructuredBuffer& sortBuffer = dx.getStructuredBuffer(sizeof(float)*4, WINWIDTH * WINHEIGHT);
 
-	DXShader& shader = dx.getComputeShader(g_main);
+	DXShader& shader = dx.getComputeShader(g_main, sizeof(g_main));
+	DXShader& qjulia = dx.getComputeShader(g_CS_QJulia4D, sizeof(g_CS_QJulia4D));
+
+	Fractal::initialize();
+
+	MSG msg;
 
 	bool running = true;
 	while (running) {
-		MSG msg;
 		PeekMessage(&msg, windowHandle, 0, 0, PM_REMOVE);
 		if (GetAsyncKeyState(VK_ESCAPE)) running = false;
 
+		Fractal::update();
+
+		Fractal::MainConstantBuffer* b = dx.map<Fractal::MainConstantBuffer>(constantBuffer);
+		
+		b->c_height = WINHEIGHT;
+		b->c_width = WINWIDTH;
+		Fractal::fill(b);
+
+		b = NULL;
+		dx.unmap(constantBuffer);
+
+		// QJulia
+		dx.setComputeShader(qjulia);
+		dx.setUAV(0,1,sortBuffer.getUAV());
+		dx.setConstantBuffer(0,1,constantBuffer);
+		dx.runShader(WINWIDTH / THREADSX, WINHEIGHT / THREADSY, 1);
+
+		// Sort
 		dx.setComputeShader(shader);
-		dx.attachStructuredBuffer(sortBuffer);
+		dx.setUAV(0, 1, backBuffer.getUAV());
+		dx.setConstantBuffer(0, 1, constantBuffer);
+		dx.setSRV(0, 1, sortBuffer.getSRV());
 		dx.runShader(WINWIDTH, WINHEIGHT, 1);
 
 		dx.resetShader();
@@ -58,4 +85,5 @@ int WINAPI WinMain(
 	}
 
 	// release buffers and shaders automatically with destructors
+	return msg.wParam;
 }

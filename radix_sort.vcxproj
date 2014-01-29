@@ -78,12 +78,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DXConstantBuffer.h" />
     <ClInclude Include="DXShader.h" />
     <ClInclude Include="DXStructuredBuffer.h" />
     <ClInclude Include="DXTexture.h" />
     <ClInclude Include="DXWrapper.h" />
+    <ClInclude Include="Fractal.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DXConstantBuffer.cpp" />
     <ClCompile Include="DXShader.cpp" />
     <ClCompile Include="DXStructuredBuffer.cpp" />
     <ClCompile Include="DXTexture.cpp" />
@@ -91,6 +94,14 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="qjulia4D.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_QJulia4D</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).sh</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <AssemblerOutputFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).asm</AssemblerOutputFile>
+    </FxCompile>
     <FxCompile Include="RadixSort.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>

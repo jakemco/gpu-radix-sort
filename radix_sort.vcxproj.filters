@@ -27,6 +27,12 @@
     <ClInclude Include="DXShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Fractal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXConstantBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXWrapper.cpp">
@@ -44,9 +50,15 @@
     <ClCompile Include="DXShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DXConstantBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="RadixSort.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
+    <FxCompile Include="qjulia4D.hlsl">
       <Filter>Source Files</Filter>
     </FxCompile>
   </ItemGroup>

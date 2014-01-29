@@ -52,16 +52,24 @@ DXStructuredBuffer DXWrapper::getStructuredBuffer(unsigned int stride, unsigned 
 	return DXStructuredBuffer(this->device, stride, num);
 }
 
-DXShader DXWrapper::getComputeShader(const BYTE* bytecode) {
-	return DXShader(device, bytecode);
+DXConstantBuffer DXWrapper::getConstantBuffer(unsigned int size) {
+	return DXConstantBuffer(this->device, size);
+}
+
+DXShader DXWrapper::getComputeShader(const BYTE* bytecode, unsigned int size) {
+	return DXShader(device, bytecode, size);
 }
 
 void DXWrapper::setComputeShader(DXShader& shader) {
 	this->context->CSSetShader(shader.getShader(), NULL, 0);
 }
 
-void DXWrapper::attachStructuredBuffer(DXStructuredBuffer& buffer) {
-	this->context->CSSetUnorderedAccessViews(0, 1, buffer.getUAV(), NULL);
+void DXWrapper::setUAV(int i, int j, ID3D11UnorderedAccessView** u) {
+	this->context->CSSetUnorderedAccessViews(i, j, u, NULL);
+}
+
+void DXWrapper::setSRV(int i, int j, ID3D11ShaderResourceView** s) {
+	this->context->CSSetShaderResources(i, j, s);
 }
 
 void DXWrapper::runShader(unsigned int x, unsigned int y, unsigned int z) {
@@ -72,3 +80,12 @@ void DXWrapper::resetShader() {
 	ID3D11ShaderResourceView* pNull = NULL;
 	this->context->CSSetShaderResources(0, 1, &pNull);
 }
+
+void DXWrapper::unmap(DXConstantBuffer& buffer) {
+	return buffer.unmap(context);
+}
+
+void DXWrapper::setConstantBuffer(int i, int j, DXConstantBuffer& b) {
+	this->context->CSSetConstantBuffers(i, j, &b.buffer);
+}
+

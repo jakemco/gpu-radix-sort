@@ -10,5 +10,9 @@ private:
 public:
 	DXTexture(IDXGISwapChain*, ID3D11Device*, int);
 	~DXTexture();
+
+	ID3D11UnorderedAccessView** getUAV() {
+		return &this->uav;
+	}
 };
 
