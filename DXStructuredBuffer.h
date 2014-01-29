@@ -10,5 +10,7 @@ private:
 public:
 	DXStructuredBuffer(ID3D11Device*, unsigned int, unsigned int);
 	~DXStructuredBuffer();
+
+	ID3D11UnorderedAccessView * const * getUAV();
 };
 

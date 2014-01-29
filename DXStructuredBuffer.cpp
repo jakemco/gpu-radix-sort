@@ -25,3 +25,7 @@ DXStructuredBuffer::DXStructuredBuffer(ID3D11Device* d, unsigned int s, unsigned
 DXStructuredBuffer::~DXStructuredBuffer()
 {
 }
+
+ID3D11UnorderedAccessView * const * DXStructuredBuffer::getUAV() {
+	return &this->uav;
+}

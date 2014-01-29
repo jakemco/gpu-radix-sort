@@ -1,5 +1,10 @@
 #include "DXWrapper.h"
 
+#include <Windows.h>
+
+#include <d3d11.h>
+#include <d3dcompiler.h>
+
 DXWrapper::DXWrapper(HWND window, int width, int height)
 {
 	const DXGI_SWAP_CHAIN_DESC sd = { { width, height, { 60, 1 }, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED, DXGI_MODE_SCALING_UNSPECIFIED }, { 1, 0 }, DXGI_USAGE_RENDER_TARGET_OUTPUT, 1, NULL, TRUE, DXGI_SWAP_EFFECT_SEQUENTIAL, 0 };
@@ -49,4 +54,21 @@ DXStructuredBuffer DXWrapper::getStructuredBuffer(unsigned int stride, unsigned 
 
 DXShader DXWrapper::getComputeShader(const BYTE* bytecode) {
 	return DXShader(device, bytecode);
+}
+
+void DXWrapper::setComputeShader(DXShader& shader) {
+	this->context->CSSetShader(shader.getShader(), NULL, 0);
+}
+
+void DXWrapper::attachStructuredBuffer(DXStructuredBuffer& buffer) {
+	this->context->CSSetUnorderedAccessViews(0, 1, buffer.getUAV(), NULL);
+}
+
+void DXWrapper::runShader(unsigned int x, unsigned int y, unsigned int z) {
+	this->context->Dispatch(x, y, z);
+}
+
+void DXWrapper::resetShader() {
+	ID3D11ShaderResourceView* pNull = NULL;
+	this->context->CSSetShaderResources(0, 1, &pNull);
 }

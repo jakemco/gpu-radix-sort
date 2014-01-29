@@ -46,14 +46,16 @@ int WINAPI WinMain(
 	while (running) {
 		MSG msg;
 		PeekMessage(&msg, windowHandle, 0, 0, PM_REMOVE);
+		if (GetAsyncKeyState(VK_ESCAPE)) running = false;
 
-		//TODO - set shader
-		//TODO - set views and buffers
-		//TODO - dispatch shader
-		//TODO - reset shader and resource view
+		dx.setComputeShader(shader);
+		dx.attachStructuredBuffer(sortBuffer);
+		dx.runShader(WINWIDTH, WINHEIGHT, 1);
+
+		dx.resetShader();
 
 		dx.present();
 	}
 
-	// release buffers and shaders
+	// release buffers and shaders automatically with destructors
 }

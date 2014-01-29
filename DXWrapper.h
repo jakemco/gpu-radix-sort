@@ -24,5 +24,12 @@ public:
 	DXTexture getTexture(int id);
 	DXStructuredBuffer getStructuredBuffer(unsigned int, unsigned int);
 	DXShader getComputeShader(const BYTE*);
+
+	void setComputeShader(DXShader&);
+	void attachStructuredBuffer(DXStructuredBuffer& buffer);
+	void runShader(unsigned int, unsigned int, unsigned int);
+	void resetShader();
+
+
 };
 
