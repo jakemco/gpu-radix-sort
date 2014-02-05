@@ -104,12 +104,12 @@ void main(
 		GroupMemoryBarrierWithGroupSync(); // wait for d to be fully populated
 
 		// get the variable
-		uint temp = o[d[GI]];
+		uint temp = o[GI];
 
 		GroupMemoryBarrierWithGroupSync(); // read-before-write
 
 		// rewrite o
-		o[GI] = temp;
+		o[d[GI]] = temp;
 
 		GroupMemoryBarrierWithGroupSync(); // wait for o to be fully populated
 
@@ -121,7 +121,7 @@ void main(
 		Result[DTid.xy] = float4(1, 0, 0, 1);
 	}
 	else {
-		Result[DTid.xy] = float(d[GI]) / 255.0;
+		Result[DTid.xy] = float(o[GI]) / 255.0;
 	}
 
 	/*
