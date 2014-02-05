@@ -31,7 +31,7 @@ bool getBit(uint i, uint n) {
 groupshared uint o[GROUP_THREADS];
 groupshared uint e[GROUP_THREADS];
 groupshared uint f[GROUP_THREADS];
-groupshared uint t[GROUP_THREADS];
+//groupshared uint t[GROUP_THREADS];
 groupshared uint d[GROUP_THREADS];
 groupshared uint totalFalses;
 
@@ -57,6 +57,7 @@ void main(
 
 
 	// loop through each bit
+	[unroll(32)]
 	for (int n = 0; n < 32; n++) {
 
 		// e is 1 where the nth bit is 0.
@@ -74,6 +75,7 @@ void main(
 		GroupMemoryBarrierWithGroupSync(); // wait for f to be populated before we loop on it
 
 		// Scan Operation (AKA Prefix Sum)
+		[unroll(int(log2(GROUP_THREADS)))]
 		for (uint i = 1; i < GROUP_THREADS; i <<= 1) { //for n = 0 .. log2(N), i =  2^n
 			uint temp;
 			if (GI > i) {
@@ -96,10 +98,12 @@ void main(
 		GroupMemoryBarrierWithGroupSync(); // wait for thread 0 to finish
 
 		// t contains the indexes for the 1 bits
-		t[GI] = GI - f[GI] + totalFalses;
+		//t[GI] = GI - f[GI] + totalFalses;
+
+		// we now construct t on the fly
 
 		// d contains the destination indexes for all the bits
-		d[GI] = e[GI] ? f[GI] : t[GI];
+		d[GI] = e[GI] ? f[GI] : GI - f[GI] + totalFalses;
 
 		// get the variable
 		uint temp = o[GI];
