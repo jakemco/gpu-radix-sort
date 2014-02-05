@@ -74,7 +74,7 @@ void main(
 		GroupMemoryBarrierWithGroupSync(); // wait for f to be populated before we loop on it
 
 		// Scan Operation (AKA Prefix Sum)
-		for (uint i = 1; i < GROUP_THREADS; i <<= 1) { //for n = 0 .. log2(N), i = 2^n
+		for (uint i = 1; i < GROUP_THREADS; i <<= 1) { //for n = 0 .. log2(N), i =  2^n
 			uint temp;
 			if (GI > i) {
 				temp = f[GI] + f[GI-i];
@@ -101,8 +101,6 @@ void main(
 		// d contains the destination indexes for all the bits
 		d[GI] = e[GI] ? f[GI] : t[GI];
 
-		GroupMemoryBarrierWithGroupSync(); // wait for d to be fully populated
-
 		// get the variable
 		uint temp = o[GI];
 
@@ -115,20 +113,13 @@ void main(
 
 	}
 
+	Result[DTid.xy] = float(o[GI]) / 0xFFFFFFFF;
+
+	/*
 	uint mod = GI % 16;
-
-	/*
-	if (mod == 0 || mod == 16 || GI < 16) {
+	
+	if (mod == 0 || GI < 16) {
 		Result[DTid.xy] = float4(1, 0, 0, 1);
-	}
-	else {
-	*/
-		Result[DTid.xy] = float(o[GI]) / 0xFFFFFFFF;
-	//}
-
-	/*
-	if (GI == 0) {
-		Result[Gid.xy] = Sums[Gid.x + Gid.y * c_width / THREADX];
 	}
 	*/
 }
