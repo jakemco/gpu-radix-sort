@@ -53,11 +53,11 @@ void main(
 	uint idx = DTid.x + DTid.y * c_width;
 
 	// populate the o array with the uint versions of this block
-	o[GI] = uint(dot(Input[idx], LumVector) * 255.0);
+	o[GI] = uint(dot(Input[idx], LumVector) * 0xFFFFFFFF);
 
 
 	// loop through each bit
-	for (int n = 0; n < 8; n++) {
+	for (int n = 0; n < 32; n++) {
 
 		// e is 1 where the nth bit is 0.
 		e[GI] = getBit(n, o[GI]) == 0;
@@ -117,12 +117,14 @@ void main(
 
 	uint mod = GI % 16;
 
+	/*
 	if (mod == 0 || mod == 16 || GI < 16) {
 		Result[DTid.xy] = float4(1, 0, 0, 1);
 	}
 	else {
-		Result[DTid.xy] = float(o[GI]) / 255.0;
-	}
+	*/
+		Result[DTid.xy] = float(o[GI]) / 0xFFFFFFFF;
+	//}
 
 	/*
 	if (GI == 0) {
