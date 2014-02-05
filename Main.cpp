@@ -74,7 +74,8 @@ int WINAPI WinMain(
 		dx.setUAV(0, 1, juliaOut.getUAV());
 		dx.setConstantBuffer(0, 1, constantBuffer);
 		dx.runShader(WINWIDTH / THREADSX, WINHEIGHT / THREADSY, 1);
-		
+		dx.resetShader();
+
 		// Sort each block
 		dx.setComputeShader(shader);
 		dx.setUAV(0, 1, backBuffer.getUAV()); //output

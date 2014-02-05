@@ -39,7 +39,6 @@ public:
 	void runShader(unsigned int, unsigned int, unsigned int);
 	void resetShader();
 
-
 };
 
 template<typename S>

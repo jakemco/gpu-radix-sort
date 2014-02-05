@@ -81,8 +81,11 @@ void DXWrapper::runShader(unsigned int x, unsigned int y, unsigned int z) {
 }
 
 void DXWrapper::resetShader() {
-	ID3D11ShaderResourceView* pNull = NULL;
-	this->context->CSSetShaderResources(0, 1, &pNull);
+	ID3D11ShaderResourceView* pNull[3] = { NULL, NULL, NULL };
+	this->context->CSSetShaderResources(0, 3, pNull);
+
+	ID3D11UnorderedAccessView* uNull[3] = { NULL, NULL, NULL };
+	this->context->CSSetUnorderedAccessViews(0, 3, uNull, NULL);
 }
 
 void DXWrapper::unmap(DXConstantBuffer& buffer) {
