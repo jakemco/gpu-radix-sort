@@ -14,6 +14,7 @@
 
 #include "RadixSort.sh"
 #include "qjulia4D.sh"
+#include "ParallelReduction.sh"
 
 // define the size of the window
 #define THREADSX 16			// number of threads in the thread group used in the compute shader
@@ -41,10 +42,12 @@ int WINAPI WinMain(
 
 	DXTexture& backBuffer = dx.getTexture(0);
 	DXConstantBuffer& constantBuffer = dx.getConstantBuffer(sizeof(Fractal::MainConstantBuffer));
-	DXStructuredBuffer& sortBuffer = dx.getStructuredBuffer(sizeof(float)*4, WINWIDTH * WINHEIGHT);
+	DXStructuredBuffer& juliaOut = dx.getStructuredBuffer(sizeof(float)*4, WINWIDTH * WINHEIGHT);
+	DXStructuredBuffer& sums = dx.getStructuredBuffer(sizeof(float), WINWIDTH*WINHEIGHT/(THREADSX*THREADSY));
 
 	DXShader& shader = dx.getComputeShader(g_main, sizeof(g_main));
 	DXShader& qjulia = dx.getComputeShader(g_CS_QJulia4D, sizeof(g_CS_QJulia4D));
+	DXShader& reduce = dx.getComputeShader(g_PostFX, sizeof(g_PostFX));
 
 	Fractal::initialize();
 
@@ -68,20 +71,22 @@ int WINAPI WinMain(
 
 		// QJulia
 		dx.setComputeShader(qjulia);
-		dx.setUAV(0,1,sortBuffer.getUAV());
-		dx.setConstantBuffer(0,1,constantBuffer);
-		dx.runShader(WINWIDTH / THREADSX, WINHEIGHT / THREADSY, 1);
-
-		// Sort
-		dx.setComputeShader(shader);
-		dx.setUAV(0, 1, backBuffer.getUAV());
+		dx.setUAV(0, 1, juliaOut.getUAV());
 		dx.setConstantBuffer(0, 1, constantBuffer);
-		dx.setSRV(0, 1, sortBuffer.getSRV());
-		dx.runShader(WINWIDTH, WINHEIGHT, 1);
+		dx.runShader(WINWIDTH / THREADSX, WINHEIGHT / THREADSY, 1);
+		
+		// Sort each block
+		dx.setComputeShader(shader);
+		dx.setUAV(0, 1, backBuffer.getUAV()); //output
+		dx.setConstantBuffer(0, 1, constantBuffer);
+		dx.setSRV(0, 1, juliaOut.getSRV()); //input
+		dx.runShader(WINWIDTH / THREADSX, WINHEIGHT / THREADSY, 1);
 
 		dx.resetShader();
 
 		dx.present();
+
+		__noop;
 	}
 
 	// release buffers and shaders automatically with destructors

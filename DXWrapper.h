@@ -23,6 +23,7 @@ public:
 
 	void present();
 	DXTexture getTexture(int id);
+	DXTexture getTexture(unsigned int, unsigned int);
 	DXStructuredBuffer getStructuredBuffer(unsigned int, unsigned int);
 	DXShader getComputeShader(const BYTE*, unsigned int);
 

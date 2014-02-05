@@ -61,5 +61,8 @@
     <FxCompile Include="qjulia4D.hlsl">
       <Filter>Source Files</Filter>
     </FxCompile>
+    <FxCompile Include="ParallelReduction.hlsl">
+      <Filter>Source Files</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

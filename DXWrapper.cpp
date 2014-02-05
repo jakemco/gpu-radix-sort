@@ -48,6 +48,10 @@ DXTexture DXWrapper::getTexture(int id) {
 	return DXTexture(this->swapChain, this->device, id);
 }
 
+DXTexture DXWrapper::getTexture(unsigned int w, unsigned int h) {
+	return DXTexture(this->device, w, h);
+}
+
 DXStructuredBuffer DXWrapper::getStructuredBuffer(unsigned int stride, unsigned int num) {
 	return DXStructuredBuffer(this->device, stride, num);
 }
